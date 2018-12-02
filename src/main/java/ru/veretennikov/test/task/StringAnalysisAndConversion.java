@@ -1,30 +1,52 @@
 package ru.veretennikov.test.task;
 
+import org.apache.log4j.Logger;
+import ru.veretennikov.test.task.exception.CellValueIsNotNumberException;
+
 import java.util.*;
 
 public class StringAnalysisAndConversion {
+    private static final Logger LOGGER = Logger.getLogger(StringAnalysisAndConversion.class);
+    private final Map<String, String> stringMapCells;
 
-    public List<String> conductAnAnalysis(Map<String, String> map) {
-        List<String> strings = new ArrayList<>();
-        Set<Map.Entry<String, String>> set = map.entrySet();
-        for (Map.Entry<String, String> me : set) {
-            if (!Character.isDigit(me.getKey().charAt(0))) {
-                String s = me.getValue();
-                StringTokenizer stringTokenizer = new StringTokenizer(s, "+-/*");
-                while (stringTokenizer.hasMoreTokens()) {
-                    String string = stringTokenizer.nextToken();
-                    System.out.println(string);
-                    if (!Character.isDigit(string.charAt(0)) && Character.isDigit(string.charAt(1))) {
-                        System.out.println(map.get(string));
-                        s = s.replace(string, map.get(string));
-                    }
-                }
-
-                strings.add((new ExecutingStringFormula().run(s).toString()));
-
-            } else strings.add("\n");
-        }
-        return strings;
+    public StringAnalysisAndConversion(Map<String, String> stringMapCells) {
+        this.stringMapCells = stringMapCells;
     }
 
+    public List<String> conductAnAnalysis() {
+        List<String> stringListResult = new ArrayList<>();
+        Set<Map.Entry<String, String>> entrySetKey = stringMapCells.entrySet();
+        for (Map.Entry<String, String> cell : entrySetKey) {
+            if (!Character.isDigit(cell.getKey().charAt(0))) {
+                try {
+                    stringListResult.add((new ExecutingStringFormula()
+                            .execute(leadToNumbers(cell.getValue(), cell.getKey(), stringMapCells))
+                            .toString()));
+                } catch (CellValueIsNotNumberException e) {
+                    LOGGER.error(e);
+                    System.exit(0);
+                }
+            } else stringListResult.add("\n");
+        }
+        return stringListResult;
+    }
+
+    protected String leadToNumbers(String value, String cellNumber, Map<String, String> mapCells) throws CellValueIsNotNumberException {
+        String stringCellValue = value;
+        StringTokenizer stringTokenizer = new StringTokenizer(stringCellValue, "+-/*");
+        while (stringTokenizer.hasMoreTokens()) {
+            String string = stringTokenizer.nextToken();
+            for (int i = 0; i < string.length(); i++) {
+                if (!Character.isDigit(string.charAt(i)) && (string.charAt(i) != '.')) {
+                    if (mapCells.get(string) != null) {
+                        stringCellValue = stringCellValue.replace(string, "(" + mapCells.get(string) + ")");
+                        stringMapCells.put(cellNumber, stringCellValue);
+                    } else {
+                        throw new CellValueIsNotNumberException(cellNumber);
+                    }
+                }
+            }
+        }
+        return stringCellValue;
+    }
 }

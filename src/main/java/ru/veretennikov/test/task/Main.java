@@ -1,16 +1,14 @@
 package ru.veretennikov.test.task;
 
 
-import java.io.IOException;
-
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         ReadAndWriteFile readAndWriteFile = new ReadAndWriteFile();
-        StringAnalysisAndConversion stringAnalysisAndConversion = new StringAnalysisAndConversion();
+        StringAnalysisAndConversion stringAnalysisAndConversion =
+                new StringAnalysisAndConversion(readAndWriteFile.readTheFile("1.csv"));
 
-        readAndWriteFile.writeDown("2.csv"
-                , stringAnalysisAndConversion.conductAnAnalysis(readAndWriteFile.readTheFile("1.csv")));
+        readAndWriteFile.writeDown("2.csv", stringAnalysisAndConversion.conductAnAnalysis());
 
     }
 }
