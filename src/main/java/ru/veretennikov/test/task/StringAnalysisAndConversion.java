@@ -3,7 +3,10 @@ package ru.veretennikov.test.task;
 import org.apache.log4j.Logger;
 import ru.veretennikov.test.task.exception.CellValueIsNotNumberException;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 public class StringAnalysisAndConversion {
     private static final Logger LOGGER = Logger.getLogger(StringAnalysisAndConversion.class);
@@ -15,8 +18,7 @@ public class StringAnalysisAndConversion {
 
     public List<String> conductAnAnalysis() {
         List<String> stringListResult = new ArrayList<>();
-        Set<Map.Entry<String, String>> entrySetKey = stringMapCells.entrySet();
-        for (Map.Entry<String, String> cell : entrySetKey) {
+        for (Map.Entry<String, String> cell : stringMapCells.entrySet()) {
             if (!Character.isDigit(cell.getKey().charAt(0))) {
                 try {
                     stringListResult.add((new ExecutingStringFormula()

@@ -9,6 +9,5 @@ public class Main {
                 new StringAnalysisAndConversion(readAndWriteFile.readTheFile("1.csv"));
 
         readAndWriteFile.writeDown("2.csv", stringAnalysisAndConversion.conductAnAnalysis());
-
     }
 }
